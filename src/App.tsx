@@ -1,58 +1,80 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import ColumnList from "./components/ColumnList";
+import PopupCard from "./components/PopupCard";
+import { useDispatch, useSelector } from "react-redux";
+import { selectColumns } from "./store/columns/selectors";
+import { selectCards } from "./store/cards/selectors";
 
-function App() {
+const LocalStorageKeys = {
+  user: "user",
+  cards: "cards",
+};
+
+const App = () => {
+  const columns = useSelector(selectColumns);
+  const cards = useSelector(selectCards);
+
+  // в useState должна попадать карта\колонка с полем isActive: true
+  const [column, setColumn] = useState<any>(null);
+  const [card, setCard] = useState<any>(null);
+
+  const [userName, setUserName] = useState<any>(
+    JSON.parse(localStorage.getItem(LocalStorageKeys.user) || "null")
+  );
+  const askUserName = () => {
+    if (userName === null || "") {
+      setUserName(prompt("Введите имя пользователя", "User"));
+    }
+    localStorage.setItem(LocalStorageKeys.user, JSON.stringify(userName));
+  };
+  askUserName();
+
+  const changeTitle = (title: string): void => {
+    card.title = title;
+    const newCards = cards.map((c: any) => {
+      if (c.id === card.id) {
+        return card;
+      }
+      return c;
+    });
+    localStorage.setItem(LocalStorageKeys.cards, JSON.stringify(newCards));
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
+      <ColumnList columns={columns} cards={cards} userName={userName} />
+      {card && (
+        <PopupCard
+          card={card}
+          columnTitle={column.title}
+          changeTitle={changeTitle}
+          user={userName}
+        />
+      )}
     </div>
   );
-}
+};
 
 export default App;
+
+export type CommentType = {
+  text: string;
+  id: any;
+  cardId: any;
+  author: string;
+};
+
+export type ColumnType = {
+  title: string;
+  id: number;
+  isActive: boolean;
+};
+
+export type CardType = {
+  title: string;
+  description: string;
+  author: string;
+  id: any;
+  columnId: number;
+  isActive: false;
+};
