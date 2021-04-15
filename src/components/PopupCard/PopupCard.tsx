@@ -1,20 +1,27 @@
 import React, { useState, useEffect } from "react";
 import Comment from "../Comment";
-import { CardType, CommentType } from "../../App";
+import { CardType, ColumnType, CommentType } from "../../App";
 import styled from "styled-components";
 import { v4 as uuidv4 } from "uuid";
 import { useDispatch, useSelector } from "react-redux";
 import { selectComments } from "../../store/comments/selectors";
 import { selectCards } from "../../store/cards/selectors";
+import { selectColumns } from "../../store/columns/selectors";
+import { deactivateCard, removeCard } from "../../store/cards/actions";
+import { addComment } from "../../store/comments/actions";
 
-const PopupCard: React.FC<Props> = ({
-  card,
-  columnTitle,
-  changeTitle,
-  user,
-}) => {
+const PopupCard: React.FC<Props> = ({ user, closeIt }) => {
+  const dispatch = useDispatch();
+  const columns = useSelector(selectColumns);
   const cards = useSelector(selectCards);
   const comments = useSelector(selectComments);
+  // Почему только с FIND начало отображать?
+  const [card, setCard] = useState(
+    cards.find((c: any) => c.isActive === true || null)
+  );
+  const [column, setColumn] = useState<any>(
+    columns.filter((c: any) => c.id === card.columnId)
+  );
 
   const [text, setText] = useState("");
 
@@ -45,16 +52,13 @@ const PopupCard: React.FC<Props> = ({
         id: uuidv4(),
         cardId: card.id,
       };
-      // setComments([...comments, newComment]);
-      // localStorage.setItem(
-      //   LocalStorageKeys.comments,
-      //   JSON.stringify([...comments, newComment])
-      // );
+      dispatch(addComment(newComment));
     }
   };
 
-  const closeCard = () => {
-    // setCard(null);
+  const closeCard = (id: number) => {
+    dispatch(deactivateCard(id)); // setCard(null);
+    closeIt();
   };
 
   const changeDescription = (description: string): void => {
@@ -69,12 +73,8 @@ const PopupCard: React.FC<Props> = ({
   };
 
   const deleteCard = (id: number): void => {
-    closeCard();
-    // setCards(cards.filter((filteredCard) => filteredCard.id !== id));
-    // localStorage.setItem(
-    //   LocalStorageKeys.cards,
-    //   JSON.stringify(cards.filter((filteredCard) => filteredCard.id !== id))
-    // );
+    closeCard(id);
+    dispatch(removeCard(id));
   };
 
   const deleteAllComments = (): void => {
@@ -90,7 +90,7 @@ const PopupCard: React.FC<Props> = ({
   useEffect(() => {
     const handleEsc = (e: any) => {
       if (e.keyCode === 27) {
-        // setCard(null);
+        closeCard(card.id);
       }
     };
     window.addEventListener("keydown", handleEsc);
@@ -98,7 +98,7 @@ const PopupCard: React.FC<Props> = ({
   }, []);
 
   const clickedParent = () => {
-    closeCard();
+    closeCard(card.id);
   };
 
   return (
@@ -113,14 +113,14 @@ const PopupCard: React.FC<Props> = ({
             <div
               contentEditable={true}
               suppressContentEditableWarning={true}
-              onInput={(e) => changeTitle(e.currentTarget.textContent)}
+              // onInput={(e) => changeTitle(e.currentTarget.textContent)}
             >
               {card.title}
             </div>
             <div>By {card.author}</div>
-            <div> From column '{columnTitle}'</div>
+            <div> From column '{column.title}'</div>
           </Title>
-          <CloseCard onClick={() => closeCard()}>X</CloseCard>
+          <CloseCard onClick={() => closeCard(card.id)}>X</CloseCard>
         </Header>
         <Body>
           <Description>
@@ -365,8 +365,6 @@ const CommentsContainer = styled.div`
 export default PopupCard;
 
 type Props = {
-  card: CardType;
-  columnTitle: string;
-  changeTitle: (args: any) => void;
   user: string;
+  closeIt: () => void;
 };

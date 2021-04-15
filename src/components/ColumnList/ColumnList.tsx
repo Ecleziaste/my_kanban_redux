@@ -1,19 +1,21 @@
 import React from "react";
 import Column from "../Column";
-import { CommentType } from "../../App";
 import styled from "styled-components";
+import { useSelector, shallowEqual } from "react-redux";
+import { selectColumns } from "../../store/columns/selectors";
 
-const ColumnList: React.FC<Props> = ({ columns, userName, cards }) => {
+const ColumnList: React.FC<Props> = ({ openIt }) => {
+  const columnsIds = useSelector(selectColumns, shallowEqual);
+
   return (
     <Container>
-      {columns.map((column) => {
+      {columnsIds.map((id) => {
         return (
           <Column
-            userName={userName}
-            title={column.title}
-            id={column.id}
-            key={column.id}
-            cards={cards}
+            openIt={openIt}
+            // title={column.title}
+            id={id}
+            // key={column.id}
           />
         );
       })}
@@ -34,7 +36,5 @@ const Container = styled.div`
 export default ColumnList;
 
 type Props = {
-  userName: any;
-  columns: Array<any>;
-  cards: Array<any>;
+  openIt: () => void;
 };

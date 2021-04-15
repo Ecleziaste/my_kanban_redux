@@ -1,21 +1,34 @@
+import { createReducer } from "@reduxjs/toolkit";
 import { CardType } from "../../App";
-import { activateCard, addCard } from "./actions";
+import { activateCard, deactivateCard, addCard, removeCard } from "./actions";
 
 const initialState: Array<CardType> = [];
 
-export const cardsReducer = (state = initialState, action: any) => {
-  switch (action.type) {
-    case addCard.type:
-      console.log(action);
+export const cardsReducer = createReducer(initialState, (builder) => {
+  builder
+    .addCase(addCard, (state, action) => {
+      state.push(action.payload);
+    })
+    .addCase(activateCard, (state, action) => {
+      state.map((c: any) => {
+        // FIXME: any?
+        if (c.id === action.payload) {
+          c.isActive = true;
+        }
+      });
+    })
 
-      return [...state, action.payload];
+    .addCase(deactivateCard, (state, action) => {
+      state.map((c: any) => {
+        if (c.id === action.payload) {
+          c.isActive = false;
+        }
+      });
+    })
+    .addCase(removeCard, (state, action) => {
+      const newState = state.filter((c) => c.id !== action.payload);
+      return newState;
+    });
+});
 
-    // case activateCard.type: {
-    //   console.log(action);
-    //   const [newCards] = [...state];
-    //   return [state[0], { isActive: action.payload }];
-    // }
-    default:
-      return state;
-  }
-};
+// const activeCard = state.find((card: any) => card.id === action.payload);

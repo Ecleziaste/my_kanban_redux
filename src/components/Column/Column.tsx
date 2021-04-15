@@ -3,35 +3,31 @@ import styled from "styled-components";
 import ColumnInput from "../ColumnInput";
 import Card from "../Card";
 import { useDispatch, useSelector } from "react-redux";
-import { selectCards } from "../../store/cards/selectors";
-import { selectColumns } from "../../store/columns/selectors";
+import { selectCardsIdsbyColumnId } from "../../store/cards/selectors";
+import { selectColumnById, selectColumns } from "../../store/columns/selectors";
 import { addCard } from "../../store/cards/actions";
 import { changeTitle } from "../../store/columns/actions";
 import { v4 as uuidv4 } from "uuid";
+import { RootState } from "../../store";
+import { selectUser } from "../../store/user/selectors";
 
-const Column: React.FC<Props> = ({ userName, title, id }) => {
+const Column: React.FC<Props> = ({ id, openIt }) => {
   const dispatch = useDispatch();
+  const user = useSelector(selectUser);
+  const { title } = useSelector((state: RootState) =>
+    selectColumnById(state, id)
+  )!;
+  const cardIds = useSelector((state: RootState) =>
+    selectCardsIdsbyColumnId(state, id)
+  );
 
   const [activeColumnInput, setActiveColumnInput] = useState(false);
   const toggleInput = (value: boolean): void => {
     setActiveColumnInput(value);
   };
 
-  const cards = useSelector(selectCards);
-  const cardsByColumnId = cards.filter((card: any) => card.columnId === id);
-
-  const columns = useSelector(selectColumns);
-  // FIXME: меняет все колонки, а хотелось бы конкретную
-  // и ваще роняет всё
-  const changeColumnTitle = (value: string, id: number): void => {
-    const columnsCopy = [...columns];
-    columnsCopy.map((column: any) => {
-      if (column.id === id) {
-        column.title = value;
-      }
-      // return columnsCopy;
-    });
-    dispatch(changeTitle(columnsCopy));
+  const changeColumnTitle = (newTitle: string, id: number): void => {
+    dispatch(changeTitle({ newTitle, id }));
   };
 
   const createCard = (title: string, columnId: number): void => {
@@ -41,7 +37,7 @@ const Column: React.FC<Props> = ({ userName, title, id }) => {
       const newCard = {
         title,
         description: "",
-        author: userName,
+        author: user,
         id: uuidv4(),
         columnId,
         isActive: false,
@@ -63,8 +59,8 @@ const Column: React.FC<Props> = ({ userName, title, id }) => {
         {title}
       </Title>
       <Cardlist>
-        {cardsByColumnId.map((card: any) => {
-          return <Card card={card} key={card.id + 1} />;
+        {cardIds.map((id) => {
+          return <Card id={id} openIt={openIt} key={id} />;
         })}
       </Cardlist>
       {activeColumnInput ? (
@@ -123,8 +119,6 @@ const AddCardBtn = styled.button`
 export default Column;
 
 type Props = {
-  userName: any;
-  title: string;
   id: number;
-  cards: Array<any>;
+  openIt: () => void;
 };

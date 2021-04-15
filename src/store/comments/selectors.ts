@@ -1,1 +1,3 @@
-export const selectComments = (state: any) => state.comments;
+import { RootState } from "../../store";
+
+export const selectComments = (state: RootState) => state.comments;

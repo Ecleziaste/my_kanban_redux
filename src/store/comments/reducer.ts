@@ -1,15 +1,11 @@
-import { addComment } from "./actions";
+import { createReducer } from "@reduxjs/toolkit";
+import { addComment, removeComment, changeComment } from "./actions";
+import { CommentType } from "../../App";
 
-const initialState: any = [];
+const initialState: Array<CommentType> = [];
 
-export const commentsReducer = (state = initialState, action: any) => {
-  switch (action.type) {
-    case addComment.type: {
-      console.log(action);
-
-      return [...state, action.payload];
-    }
-    default:
-      return state;
-  }
-};
+export const commentsReducer = createReducer(initialState, (builder) => {
+  builder.addCase(addComment, (state, action) => {
+    state.push(action.payload);
+  });
+});

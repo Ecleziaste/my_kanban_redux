@@ -37,7 +37,6 @@ const Container = styled.div`
   margin: 5px auto;
   padding: 0;
 `;
-
 const BtnsWrapper = styled.div`
   display: flex;
   justify-content: space-between;
@@ -59,7 +58,6 @@ const AddBtn = styled.button`
   height: 25px;
   padding: 4px;
 `;
-
 const CancelBtn = styled.button`
   margin-top: 5px;
   width: 25px;

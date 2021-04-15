@@ -1,3 +1,4 @@
+import { createReducer } from "@reduxjs/toolkit";
 import { ColumnType } from "../../App";
 import { changeTitle } from "./actions";
 
@@ -7,15 +8,13 @@ const initialState: Array<ColumnType> = [
   { title: "Testing", id: 3, isActive: false },
   { title: "Done", id: 4, isActive: false },
 ];
-
-export const columnsReducer = (state = initialState, action: any) => {
-  switch (action.type) {
-    case changeTitle.type: {
-      console.log(action);
-
-      return [action.payload];
-    }
-    default:
-      return state;
-  }
-};
+// isActive убрать, если не понадобится
+export const columnsReducer = createReducer(initialState, (builder) => {
+  builder.addCase(changeTitle, (state, action) => {
+    state.map((c: any) => {
+      if (c.id === action.payload.id) {
+        c.title = action.payload.newTitle;
+      }
+    });
+  });
+});

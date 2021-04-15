@@ -2,55 +2,30 @@ import React, { useState, useEffect } from "react";
 import ColumnList from "./components/ColumnList";
 import PopupCard from "./components/PopupCard";
 import { useDispatch, useSelector } from "react-redux";
-import { selectColumns } from "./store/columns/selectors";
 import { selectCards } from "./store/cards/selectors";
-
-const LocalStorageKeys = {
-  user: "user",
-  cards: "cards",
-};
+import { selectUser } from "./store/user/selectors";
+import { setUser } from "./store/user/actions";
 
 const App = () => {
-  const columns = useSelector(selectColumns);
-  const cards = useSelector(selectCards);
-
-  // в useState должна попадать карта\колонка с полем isActive: true
-  const [column, setColumn] = useState<any>(null);
-  const [card, setCard] = useState<any>(null);
-
-  const [userName, setUserName] = useState<any>(
-    JSON.parse(localStorage.getItem(LocalStorageKeys.user) || "null")
+  const dispatch = useDispatch();
+  const user: any = useSelector(selectUser);
+  const cards: any = useSelector(selectCards);
+  const [card, setCard] = useState<any>(
+    cards.find((c: any) => c.isActive === true || null)
+    // тут с фильтром всё ломается
   );
-  const askUserName = () => {
-    if (userName === null || "") {
-      setUserName(prompt("Введите имя пользователя", "User"));
-    }
-    localStorage.setItem(LocalStorageKeys.user, JSON.stringify(userName));
+  const openIt = () => {
+    setCard(cards.filter((c: any) => c.isActive === true));
+    // если find - то срабатывает со второго клика
   };
-  askUserName();
-
-  const changeTitle = (title: string): void => {
-    card.title = title;
-    const newCards = cards.map((c: any) => {
-      if (c.id === card.id) {
-        return card;
-      }
-      return c;
-    });
-    localStorage.setItem(LocalStorageKeys.cards, JSON.stringify(newCards));
+  const closeIt = () => {
+    setCard(null);
   };
 
   return (
     <div className="App">
-      <ColumnList columns={columns} cards={cards} userName={userName} />
-      {card && (
-        <PopupCard
-          card={card}
-          columnTitle={column.title}
-          changeTitle={changeTitle}
-          user={userName}
-        />
-      )}
+      <ColumnList openIt={openIt} />
+      {card && <PopupCard user={user} closeIt={closeIt} />}
     </div>
   );
 };
@@ -74,7 +49,7 @@ export type CardType = {
   title: string;
   description: string;
   author: string;
-  id: any;
+  id: string;
   columnId: number;
   isActive: false;
 };

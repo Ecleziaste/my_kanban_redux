@@ -1,35 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import { CardType } from "../../App";
 import { CommentType } from "../../App";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { selectComments } from "../../store/comments/selectors";
 import { activateCard } from "../../store/cards/actions";
+import { selectCards } from "../../store/cards/selectors";
+import { selectColumns } from "../../store/columns/selectors";
 
-const Card: React.FC<Props> = ({ card }) => {
+const Card: React.FC<Props> = ({ openIt, id }) => {
   const dispatch = useDispatch();
-
   const comments = useSelector(selectComments);
   const commentsCount = comments.filter(
-    (comment: CommentType) => comment.cardId === card.id
+    (comment: CommentType) => comment.cardId === id
   );
+  const cards = useSelector(selectCards);
+  // Почему тут надо указывать тип? Он не прилетает из RootType?
+  const titleByCardId = cards.find((c: CardType) => c.id === id).title;
 
   const openCard = (id: number) => {
-    // const activeCard = cards.find((card: any) => card.id === id);
-    console.log(card.id);
-    dispatch(activateCard(true));
-    // if (activeCard) {
-    //   const activeColumn = columns.find(
-    //     (column: Column) => column.id === activeCard.columnId
-    //   );
-    //   setColumn(activeColumn);
-    //   setCard(activeCard);
-    // }
+    dispatch(activateCard(id));
+    openIt();
   };
 
   return (
-    <Container onClick={() => openCard(card.id)}>
-      <div>{card.title}</div>
+    <Container onClick={() => openCard(id)}>
+      <div>{titleByCardId}</div>
       <span>Комментарии:&nbsp;{commentsCount.length}</span>
     </Container>
   );
@@ -46,5 +42,6 @@ const Container = styled.button`
 export default Card;
 
 type Props = {
-  card: CardType;
+  id: any;
+  openIt: () => void;
 };
