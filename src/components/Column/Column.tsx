@@ -65,6 +65,7 @@ const Column: React.FC<Props> = ({ id }) => {
       {activeColumnInput ? (
         <ColumnInput
           id={id}
+          key={id}
           createCard={createCard}
           toggleInput={toggleInput}
         />

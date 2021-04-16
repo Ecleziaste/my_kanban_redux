@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import Comment from "../Comment";
-import { CommentType } from "../../App";
+import { CardType, CommentType } from "../../App";
 import styled from "styled-components";
 import { v4 as uuidv4 } from "uuid";
 import { useDispatch, useSelector } from "react-redux";
 import { selectComments } from "../../store/comments/selectors";
-import { removeCard } from "../../store/cards/actions";
+import {
+  removeCard,
+  changeCardDesc,
+  changeCardTitle,
+} from "../../store/cards/actions";
 import { removeAllComments } from "../../store/comments/actions";
 import { toggleActiveCard } from "../../store/activeCard/actions";
 import { addComment } from "../../store/comments/actions";
@@ -32,6 +36,21 @@ const PopupCard: React.FC<Props> = () => {
   const handleChangeDesc = (value: string) => {
     setChangeDesc(value);
   };
+  const [newTitle, setTitle] = useState(card.description);
+  const handleChangeTitle = (value: string) => {
+    setTitle(value);
+  };
+
+  const changeDescription = (newDesc: any, id: any): void => {
+    dispatch(changeCardDesc({ newDesc, id }));
+    dispatch(toggleActiveCard({ ...card, description: newDesc }));
+  };
+
+  const changeTitle = (newTitle: any, id: any): void => {
+    dispatch(changeCardTitle({ newTitle, id }));
+    dispatch(toggleActiveCard({ ...card, title: newTitle }));
+  };
+
   const [activeDescriptionInput, setActiveDescriptionInput] = useState(false);
   const toggleDescriptionInput = (value: boolean): void => {
     setActiveDescriptionInput(value);
@@ -65,17 +84,6 @@ const PopupCard: React.FC<Props> = () => {
     dispatch(removeAllComments(id));
   };
 
-  const changeDescription = (description: string): void => {
-    // card.description = description;
-    // const newCards = cards.map((c: any) => {
-    //   if (c.id === card.id) {
-    //     return card;
-    //   }
-    //   return c;
-    // });
-    // localStorage.setItem(LocalStorageKeys.cards, JSON.stringify(newCards));
-  };
-
   useEffect(() => {
     const handleEsc = (e: any) => {
       if (e.keyCode === 27) {
@@ -85,7 +93,7 @@ const PopupCard: React.FC<Props> = () => {
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
   });
-  // []
+
   const clickedParent = () => {
     closeCard();
   };
@@ -102,7 +110,8 @@ const PopupCard: React.FC<Props> = () => {
             <div
               contentEditable={true}
               suppressContentEditableWarning={true}
-              // onInput={(e) => changeTitle(e.currentTarget.textContent)}
+              onInput={(e) => setTitle(e.currentTarget.textContent)}
+              onBlur={() => changeTitle(newTitle, card.id)}
             >
               {card.title}
             </div>
@@ -129,7 +138,7 @@ const PopupCard: React.FC<Props> = () => {
                   <PopupDescriptionAddBtn
                     onClick={() => {
                       toggleDescriptionInput(false);
-                      changeDescription(changeDesc);
+                      changeDescription(changeDesc, card.id);
                     }}
                   >
                     Сохранить
@@ -137,7 +146,7 @@ const PopupCard: React.FC<Props> = () => {
                   <PopupDescriptionCancelBtn
                     onClick={() => {
                       toggleDescriptionInput(false);
-                      changeDescription(card.description);
+                      changeDescription(card.description, card.id);
                     }}
                   >
                     &#10006;

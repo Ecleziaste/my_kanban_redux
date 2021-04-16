@@ -73,7 +73,7 @@ const Comment: React.FC<Props> = ({ author, text, id, user }) => {
 };
 
 const FocusedInput = styled.textarea`
-  width: 82%;
+  width: 80%;
   height: 50px;
   border-radius: 4px;
   margin-top: 5px;

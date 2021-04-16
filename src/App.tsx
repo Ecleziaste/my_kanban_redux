@@ -5,8 +5,6 @@ import { selectActiveCard } from "./store/activeCard/selectors";
 
 const App = () => {
   const activeCard = useSelector(selectActiveCard);
-  // const activeCard =
-  //   useSelector(selectCards).filter((c: any) => c.isActive === true) || null;
 
   return (
     <div className="App">

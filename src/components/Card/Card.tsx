@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { CardType } from "../../App";
 import { CommentType } from "../../App";
 import styled from "styled-components";

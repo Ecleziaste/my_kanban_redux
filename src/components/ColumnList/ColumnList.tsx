@@ -10,7 +10,7 @@ const ColumnList: React.FC<Props> = () => {
   return (
     <Container>
       {columnsIds.map((id) => {
-        return <Column id={id} />;
+        return <Column id={id} key={id} />;
       })}
     </Container>
   );
