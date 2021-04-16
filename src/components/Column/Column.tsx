@@ -11,7 +11,7 @@ import { v4 as uuidv4 } from "uuid";
 import { RootState } from "../../store";
 import { selectUser } from "../../store/user/selectors";
 
-const Column: React.FC<Props> = ({ id, openIt }) => {
+const Column: React.FC<Props> = ({ id }) => {
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
   const { title } = useSelector((state: RootState) =>
@@ -40,7 +40,6 @@ const Column: React.FC<Props> = ({ id, openIt }) => {
         author: user,
         id: uuidv4(),
         columnId,
-        isActive: false,
       };
       dispatch(addCard(newCard));
     }
@@ -60,7 +59,7 @@ const Column: React.FC<Props> = ({ id, openIt }) => {
       </Title>
       <Cardlist>
         {cardIds.map((id) => {
-          return <Card id={id} openIt={openIt} key={id} />;
+          return <Card id={id} key={id} />;
         })}
       </Cardlist>
       {activeColumnInput ? (
@@ -120,5 +119,4 @@ export default Column;
 
 type Props = {
   id: number;
-  openIt: () => void;
 };

@@ -4,20 +4,13 @@ import styled from "styled-components";
 import { useSelector, shallowEqual } from "react-redux";
 import { selectColumns } from "../../store/columns/selectors";
 
-const ColumnList: React.FC<Props> = ({ openIt }) => {
+const ColumnList: React.FC<Props> = () => {
   const columnsIds = useSelector(selectColumns, shallowEqual);
 
   return (
     <Container>
       {columnsIds.map((id) => {
-        return (
-          <Column
-            openIt={openIt}
-            // title={column.title}
-            id={id}
-            // key={column.id}
-          />
-        );
+        return <Column id={id} />;
       })}
     </Container>
   );
@@ -35,6 +28,4 @@ const Container = styled.div`
 
 export default ColumnList;
 
-type Props = {
-  openIt: () => void;
-};
+type Props = {};

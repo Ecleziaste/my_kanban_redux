@@ -1,11 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
 const ColumnInput: React.FC<Props> = ({ createCard, toggleInput, id }) => {
-  const closeInput = () => {
-    toggleInput(false);
-  };
   const [title, setTitle] = useState("");
+
+  useEffect(() => {
+    const handleEnter = (e: any) => {
+      if (e.keyCode === 13) {
+        createCard(title, id);
+        toggleInput(false);
+      }
+    };
+    window.addEventListener("keydown", handleEnter);
+    return () => window.removeEventListener("keydown", handleEnter);
+  }, [title]);
+
+  useEffect(() => {
+    const handleEnter = (e: any) => {
+      if (e.keyCode === 27) {
+        toggleInput(false);
+      }
+    };
+    window.addEventListener("keydown", handleEnter);
+    return () => window.removeEventListener("keydown", handleEnter);
+  }, []);
 
   return (
     <Container>
@@ -24,7 +42,10 @@ const ColumnInput: React.FC<Props> = ({ createCard, toggleInput, id }) => {
         >
           Добавить
         </AddBtn>
-        <CancelBtn className="input__del_btn" onClick={closeInput}>
+        <CancelBtn
+          className="input__del_btn"
+          onClick={() => toggleInput(false)}
+        >
           &#10006;
         </CancelBtn>
       </BtnsWrapper>

@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
+import { removeComment, changeComment } from "../../store/comments/actions";
 
 const Comment: React.FC<Props> = ({ author, text, id, user }) => {
-  const [changeText, setChangeText] = useState(text);
+  const dispatch = useDispatch();
+  const [newText, setNewText] = useState(text);
 
   const [changeBtnClicked, setChangeBtn] = useState(false);
 
@@ -19,39 +21,9 @@ const Comment: React.FC<Props> = ({ author, text, id, user }) => {
     }
   };
 
-  const changeComment = (text: string, id: number): void => {
-    // const comment: any = comments.find(
-    //   (filteredComment) => filteredComment.id === id
-    // );
-    // comment.text = text;
-    // const newComments = comments.map((c) => {
-    //   if (c.id === comment.id) {
-    //     return comment;
-    //   }
-    //   return c;
-    // });
-    // setComments(newComments);
-    // localStorage.setItem(
-    //   LocalStorageKeys.comments,
-    //   JSON.stringify(newComments)
-    // );
-  };
-
-  const deleteComment = (id: number): void => {
-    // setComments(
-    //   comments.filter((filteredComment) => filteredComment.id !== id)
-    // );
-    // localStorage.setItem(
-    //   LocalStorageKeys.comments,
-    //   JSON.stringify(
-    //     comments.filter((filteredComment) => filteredComment.id !== id)
-    //   )
-    // );
-  };
-
   const handleDeleteClick = (): void => {
     if (user === author) {
-      deleteComment(id);
+      dispatch(removeComment(id));
     } else {
       alert("U are not able to delete this comment");
     }
@@ -63,14 +35,14 @@ const Comment: React.FC<Props> = ({ author, text, id, user }) => {
         <>
           <FocusedInput
             defaultValue={text}
-            onChange={(e) => setChangeText(e.target.value)}
+            onChange={(e) => setNewText(e.target.value)}
             autoFocus
           ></FocusedInput>
           <div>
             <Btn
               onClick={() => {
                 toggleChangeInput(false);
-                changeComment(changeText, id);
+                dispatch(changeComment({ newText, id }));
               }}
             >
               Сохранить
@@ -78,8 +50,8 @@ const Comment: React.FC<Props> = ({ author, text, id, user }) => {
             <Btn
               onClick={() => {
                 toggleChangeInput(false);
-                setChangeText(text);
-                changeComment(text, id);
+                setNewText(text);
+                dispatch(changeComment({ newText, id }));
               }}
             >
               &#10006;
@@ -89,7 +61,7 @@ const Comment: React.FC<Props> = ({ author, text, id, user }) => {
       ) : (
         <CommentContentWrapper>
           <Author>{author} said:&nbsp;&nbsp;</Author>
-          <Text>{changeText}</Text>
+          <Text>{text}</Text>
           <BtnsWrapper>
             <AddBtn onClick={handleChangeClick}>Change</AddBtn>
             <DelBtn onClick={handleDeleteClick}>Delete</DelBtn>
@@ -100,15 +72,16 @@ const Comment: React.FC<Props> = ({ author, text, id, user }) => {
   );
 };
 
-const FocusedInput = styled.input`
-  width: 100%;
-  height: 70px;
+const FocusedInput = styled.textarea`
+  width: 82%;
+  height: 50px;
   border-radius: 4px;
   margin-top: 5px;
   padding: 10px;
   box-shadow: 0 0 5px 1px #036788;
   background: white;
   cursor: text;
+  word-break: break-word;
 `;
 const Btn = styled.button`
   margin: 5px;

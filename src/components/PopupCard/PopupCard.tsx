@@ -1,27 +1,30 @@
 import React, { useState, useEffect } from "react";
 import Comment from "../Comment";
-import { CardType, ColumnType, CommentType } from "../../App";
+import { CommentType } from "../../App";
 import styled from "styled-components";
 import { v4 as uuidv4 } from "uuid";
 import { useDispatch, useSelector } from "react-redux";
 import { selectComments } from "../../store/comments/selectors";
-import { selectCards } from "../../store/cards/selectors";
-import { selectColumns } from "../../store/columns/selectors";
-import { deactivateCard, removeCard } from "../../store/cards/actions";
+import { removeCard } from "../../store/cards/actions";
+import { removeAllComments } from "../../store/comments/actions";
+import { toggleActiveCard } from "../../store/activeCard/actions";
 import { addComment } from "../../store/comments/actions";
+import { selectActiveCard } from "../../store/activeCard/selectors";
+import { selectColumnById } from "../../store/columns/selectors";
+import { RootState } from "../../store";
 
-const PopupCard: React.FC<Props> = ({ user, closeIt }) => {
+const PopupCard: React.FC<Props> = () => {
   const dispatch = useDispatch();
-  const columns = useSelector(selectColumns);
-  const cards = useSelector(selectCards);
+  const card = useSelector(selectActiveCard);
+
   const comments = useSelector(selectComments);
-  // Почему только с FIND начало отображать?
-  const [card, setCard] = useState(
-    cards.find((c: any) => c.isActive === true || null)
+  const commentsByCardId = comments.filter(
+    (comm: CommentType) => comm.cardId === card.id
   );
-  const [column, setColumn] = useState<any>(
-    columns.filter((c: any) => c.id === card.columnId)
-  );
+
+  const { title } = useSelector((state: RootState) =>
+    selectColumnById(state, card.columnId)
+  )!;
 
   const [text, setText] = useState("");
 
@@ -38,17 +41,13 @@ const PopupCard: React.FC<Props> = ({ user, closeIt }) => {
     setActiveCommentInput(value);
   };
 
-  const commentsByCardId = comments.filter(
-    (comment: CommentType) => comment.cardId === card.id
-  );
-
   const createComment = (text: string): void => {
     if (text === "" || undefined) {
       alert("пустой коммент не будет добавлен");
     } else {
       const newComment = {
         text,
-        author: user,
+        author: card.author,
         id: uuidv4(),
         cardId: card.id,
       };
@@ -56,9 +55,14 @@ const PopupCard: React.FC<Props> = ({ user, closeIt }) => {
     }
   };
 
-  const closeCard = (id: number) => {
-    dispatch(deactivateCard(id)); // setCard(null);
-    closeIt();
+  const closeCard = () => {
+    dispatch(toggleActiveCard(null));
+  };
+
+  const deleteCard = (id: number): void => {
+    closeCard();
+    dispatch(removeCard(id));
+    dispatch(removeAllComments(id));
   };
 
   const changeDescription = (description: string): void => {
@@ -72,33 +76,18 @@ const PopupCard: React.FC<Props> = ({ user, closeIt }) => {
     // localStorage.setItem(LocalStorageKeys.cards, JSON.stringify(newCards));
   };
 
-  const deleteCard = (id: number): void => {
-    closeCard(id);
-    dispatch(removeCard(id));
-  };
-
-  const deleteAllComments = (): void => {
-    // setComments(comments.filter((comment) => comment.cardId !== card.id));
-    // localStorage.setItem(
-    //   LocalStorageKeys.comments,
-    //   JSON.stringify(
-    //     comments.filter((filteredComment) => filteredComment.cardId !== card.id)
-    //   )
-    // );
-  };
-
   useEffect(() => {
     const handleEsc = (e: any) => {
       if (e.keyCode === 27) {
-        closeCard(card.id);
+        closeCard();
       }
     };
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
-  }, []);
-
+  });
+  // []
   const clickedParent = () => {
-    closeCard(card.id);
+    closeCard();
   };
 
   return (
@@ -118,9 +107,9 @@ const PopupCard: React.FC<Props> = ({ user, closeIt }) => {
               {card.title}
             </div>
             <div>By {card.author}</div>
-            <div> From column '{column.title}'</div>
+            <div> From column '{title}'</div>
           </Title>
-          <CloseCard onClick={() => closeCard(card.id)}>X</CloseCard>
+          <CloseCard onClick={() => closeCard()}>X</CloseCard>
         </Header>
         <Body>
           <Description>
@@ -201,7 +190,7 @@ const PopupCard: React.FC<Props> = ({ user, closeIt }) => {
                       text={comment.text}
                       key={comment.id}
                       id={comment.id}
-                      user={user}
+                      user={card.author}
                     />
                   );
                 })}
@@ -209,12 +198,7 @@ const PopupCard: React.FC<Props> = ({ user, closeIt }) => {
           </CommentsWrapper>
         </Body>
 
-        <DelCardBtn
-          onClick={() => {
-            deleteCard(card.id);
-            deleteAllComments();
-          }}
-        >
+        <DelCardBtn onClick={() => deleteCard(card.id)}>
           delete dis card
         </DelCardBtn>
       </Popup>
@@ -279,7 +263,7 @@ const DescriptionText = styled.div`
   overflow: clip;
 `;
 const FocusedDescInput = styled.input`
-  width: 100%;
+  width: 85%;
   height: 70px;
   border-radius: 4px;
   margin-top: 5px;
@@ -289,13 +273,13 @@ const FocusedDescInput = styled.input`
   cursor: text;
 `;
 const DescInput = styled.input`
-  width: 100%;
-  cursor: pointer;
+  width: 85%;
   display: flex;
   flex-flow: column nowrap;
   border-radius: 4px;
   margin-top: 5px;
   padding: 10px;
+  cursor: pointer;
 `;
 const CommentsWrapper = styled.div`
   width: 100%;
@@ -364,7 +348,4 @@ const CommentsContainer = styled.div`
 
 export default PopupCard;
 
-type Props = {
-  user: string;
-  closeIt: () => void;
-};
+type Props = {};
