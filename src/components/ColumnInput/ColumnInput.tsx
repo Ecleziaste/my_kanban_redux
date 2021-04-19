@@ -87,7 +87,7 @@ const CancelBtn = styled.button`
 export default ColumnInput;
 
 type Props = {
-  id: number;
-  createCard: (title: string, columnId: number) => void;
+  id: string;
+  createCard: (title: string, columnId: string) => void;
   toggleInput: (arg: boolean) => void;
 };

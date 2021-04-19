@@ -1,11 +1,11 @@
 import { createSelector } from "reselect";
 import { RootState } from "..";
 
-export const selectCards = (state: any) => state.cards;
+export const selectCards = (state: RootState) => state.cards;
 
 export const selectCardsIdsbyColumnId = createSelector(
   (state: RootState) => state.cards,
-  (_: any, columnId: number) => columnId,
+  (_: RootState, columnId: string) => columnId,
   (cards, columnId) =>
     cards.filter((card) => card.columnId === columnId).map((card) => card.id)
 );

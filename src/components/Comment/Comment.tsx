@@ -131,6 +131,6 @@ export default Comment;
 type Props = {
   author: string;
   text: string;
-  id: number;
+  id: string;
   user: string;
 };

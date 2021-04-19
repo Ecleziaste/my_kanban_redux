@@ -19,27 +19,21 @@ import { RootState } from "../../store";
 
 const PopupCard: React.FC<Props> = () => {
   const dispatch = useDispatch();
-  const card = useSelector(selectActiveCard);
+  const card = useSelector(selectActiveCard)!;
+  const comments = useSelector(selectComments)!;
+  const [text, setText] = useState("");
+  const [changeDesc, setChangeDesc] = useState(card!.description);
+  const [newTitle, setTitle] = useState(card!.description);
+  const [activeDescriptionInput, setActiveDescriptionInput] = useState(false);
+  const [activeCommentInput, setActiveCommentInput] = useState(false);
 
-  const comments = useSelector(selectComments);
   const commentsByCardId = comments.filter(
-    (comm: CommentType) => comm.cardId === card.id
+    (comm: CommentType) => comm.cardId === card!.id
   );
 
   const { title } = useSelector((state: RootState) =>
-    selectColumnById(state, card.columnId)
+    selectColumnById(state, card!.columnId)
   )!;
-
-  const [text, setText] = useState("");
-
-  const [changeDesc, setChangeDesc] = useState(card.description);
-  const handleChangeDesc = (value: string) => {
-    setChangeDesc(value);
-  };
-  const [newTitle, setTitle] = useState(card.description);
-  const handleChangeTitle = (value: string) => {
-    setTitle(value);
-  };
 
   const changeDescription = (newDesc: any, id: any): void => {
     dispatch(changeCardDesc({ newDesc, id }));
@@ -51,11 +45,9 @@ const PopupCard: React.FC<Props> = () => {
     dispatch(toggleActiveCard({ ...card, title: newTitle }));
   };
 
-  const [activeDescriptionInput, setActiveDescriptionInput] = useState(false);
   const toggleDescriptionInput = (value: boolean): void => {
     setActiveDescriptionInput(value);
   };
-  const [activeCommentInput, setActiveCommentInput] = useState(false);
   const toggleCommentInput = (value: boolean): void => {
     setActiveCommentInput(value);
   };
@@ -78,7 +70,7 @@ const PopupCard: React.FC<Props> = () => {
     dispatch(toggleActiveCard(null));
   };
 
-  const deleteCard = (id: number): void => {
+  const deleteCard = (id: string): void => {
     closeCard();
     dispatch(removeCard(id));
     dispatch(removeAllComments(id));
@@ -110,7 +102,7 @@ const PopupCard: React.FC<Props> = () => {
             <div
               contentEditable={true}
               suppressContentEditableWarning={true}
-              onInput={(e) => setTitle(e.currentTarget.textContent)}
+              onInput={(e) => setTitle(e.currentTarget.textContent as string)}
               onBlur={() => changeTitle(newTitle, card.id)}
             >
               {card.title}
@@ -131,7 +123,7 @@ const PopupCard: React.FC<Props> = () => {
                     defaultValue={card.description}
                     placeholder="Добавьте подробное описание здесь..."
                     onChange={(e) => {
-                      handleChangeDesc(e.target.value);
+                      setChangeDesc(e.target.value);
                     }}
                     autoFocus
                   ></FocusedDescInput>
@@ -207,7 +199,7 @@ const PopupCard: React.FC<Props> = () => {
           </CommentsWrapper>
         </Body>
 
-        <DelCardBtn onClick={() => deleteCard(card.id)}>
+        <DelCardBtn onClick={() => deleteCard(card!.id)}>
           delete dis card
         </DelCardBtn>
       </Popup>

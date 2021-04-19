@@ -26,11 +26,11 @@ const Column: React.FC<Props> = ({ id }) => {
     setActiveColumnInput(value);
   };
 
-  const changeColumnTitle = (newTitle: string, id: number): void => {
+  const changeColumnTitle = (newTitle: string, id: string): void => {
     dispatch(changeTitle({ newTitle, id }));
   };
 
-  const createCard = (title: string, columnId: number): void => {
+  const createCard = (title: string, columnId: string): void => {
     if (title === "" || undefined) {
       alert("карточка нуждается хотя бы в одном символе");
     } else {
@@ -119,5 +119,5 @@ const AddCardBtn = styled.button`
 export default Column;
 
 type Props = {
-  id: number;
+  id: string;
 };

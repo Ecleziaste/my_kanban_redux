@@ -9,7 +9,7 @@ const App = () => {
   return (
     <div className="App">
       <ColumnList />
-      {activeCard && <PopupCard />}
+      {activeCard !== null && <PopupCard />}
     </div>
   );
 };
@@ -18,14 +18,14 @@ export default App;
 
 export type CommentType = {
   text: string;
-  id: any;
+  id: string;
   cardId: any;
   author: string;
 };
 
 export type ColumnType = {
   title: string;
-  id: number;
+  id: string;
 };
 
 export type CardType = {
@@ -33,5 +33,5 @@ export type CardType = {
   description: string;
   author: string;
   id: string;
-  columnId: number;
+  columnId: string;
 };

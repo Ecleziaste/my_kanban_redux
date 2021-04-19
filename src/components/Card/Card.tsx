@@ -16,8 +16,8 @@ const Card: React.FC<Props> = ({ id }) => {
 
   const cards = useSelector(selectCards);
   // Почему тут надо указывать тип? Он не прилетает из RootType?
-  const titleByCardId = cards.find((c: CardType) => c.id === id).title;
-  const cardByCardId = cards.find((c: CardType) => c.id === id);
+  const titleByCardId = cards.find((c: CardType) => c.id === id)!.title;
+  const cardByCardId = cards.find((c: CardType) => c.id === id)!;
 
   const openCard = (card: CardType) => {
     dispatch(toggleActiveCard(card));
@@ -42,5 +42,5 @@ const Container = styled.button`
 export default Card;
 
 type Props = {
-  id: any;
+  id: string;
 };
