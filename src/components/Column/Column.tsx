@@ -4,7 +4,7 @@ import ColumnInput from "../ColumnInput";
 import Card from "../Card";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCardsIdsbyColumnId } from "../../store/cards/selectors";
-import { selectColumnById, selectColumns } from "../../store/columns/selectors";
+import { selectColumnById } from "../../store/columns/selectors";
 import { addCard } from "../../store/cards/actions";
 import { changeTitle } from "../../store/columns/actions";
 import { v4 as uuidv4 } from "uuid";
@@ -26,8 +26,8 @@ const Column: React.FC<Props> = ({ id }) => {
     setActiveColumnInput(value);
   };
 
-  const changeColumnTitle = (newTitle: string, id: string): void => {
-    dispatch(changeTitle({ newTitle, id }));
+  const changeColumnTitle = (newText: string, id: string): void => {
+    dispatch(changeTitle({ newText, id }));
   };
 
   const createCard = (title: string, columnId: string): void => {
@@ -94,6 +94,7 @@ const Title = styled.div`
   font-weight: 500;
   margin: 5px;
   padding: 5px;
+  width: 90%;
   cursor: pointer;
   &:focus {
     outline: none;

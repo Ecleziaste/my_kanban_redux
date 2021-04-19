@@ -19,17 +19,17 @@ export const cardsReducer = createReducer(initialState, (builder) => {
       return newState;
     })
     .addCase(changeCardDesc, (state, action) => {
-      state.map((c: any) => {
+      state.map((c: CardType) => {
         if (c.id === action.payload.id) {
-          c.description = action.payload.newDesc;
+          c.description = action.payload.newText;
         }
         return state;
       });
     })
     .addCase(changeCardTitle, (state, action) => {
-      state.map((c: any) => {
+      state.map((c: CardType) => {
         if (c.id === action.payload.id) {
-          c.title = action.payload.newTitle;
+          c.title = action.payload.newText;
         }
         return state;
       });

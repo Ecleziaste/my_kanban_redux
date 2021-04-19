@@ -1,3 +1,3 @@
 import { createAction } from "@reduxjs/toolkit";
 
-export const setUser = createAction<any>("user/set");
+export const setUser = createAction<string>("user/set");

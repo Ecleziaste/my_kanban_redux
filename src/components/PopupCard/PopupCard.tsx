@@ -15,10 +15,13 @@ import { toggleActiveCard } from "../../store/activeCard/actions";
 import { addComment } from "../../store/comments/actions";
 import { selectActiveCard } from "../../store/activeCard/selectors";
 import { selectColumnById } from "../../store/columns/selectors";
+// import { selectByCardId } from "../../store/comments/selectors";
 import { RootState } from "../../store";
+import { selectUser } from "../../store/user/selectors";
 
 const PopupCard: React.FC<Props> = () => {
   const dispatch = useDispatch();
+  const user = useSelector(selectUser);
   const card = useSelector(selectActiveCard)!;
   const comments = useSelector(selectComments)!;
   const [text, setText] = useState("");
@@ -27,6 +30,7 @@ const PopupCard: React.FC<Props> = () => {
   const [activeDescriptionInput, setActiveDescriptionInput] = useState(false);
   const [activeCommentInput, setActiveCommentInput] = useState(false);
 
+  // const commentsByCardId = useSelector(selectByCardId)!;
   const commentsByCardId = comments.filter(
     (comm: CommentType) => comm.cardId === card!.id
   );
@@ -35,14 +39,14 @@ const PopupCard: React.FC<Props> = () => {
     selectColumnById(state, card!.columnId)
   )!;
 
-  const changeDescription = (newDesc: any, id: any): void => {
-    dispatch(changeCardDesc({ newDesc, id }));
-    dispatch(toggleActiveCard({ ...card, description: newDesc }));
+  const changeDescription = (newText: string, id: string): void => {
+    dispatch(changeCardDesc({ newText, id }));
+    dispatch(toggleActiveCard({ ...card, description: newText }));
   };
 
-  const changeTitle = (newTitle: any, id: any): void => {
-    dispatch(changeCardTitle({ newTitle, id }));
-    dispatch(toggleActiveCard({ ...card, title: newTitle }));
+  const changeTitle = (newText: string, id: string): void => {
+    dispatch(changeCardTitle({ newText, id }));
+    dispatch(toggleActiveCard({ ...card, title: newText }));
   };
 
   const toggleDescriptionInput = (value: boolean): void => {
@@ -58,7 +62,7 @@ const PopupCard: React.FC<Props> = () => {
     } else {
       const newComment = {
         text,
-        author: card.author,
+        author: user,
         id: uuidv4(),
         cardId: card.id,
       };
@@ -71,9 +75,13 @@ const PopupCard: React.FC<Props> = () => {
   };
 
   const deleteCard = (id: string): void => {
-    closeCard();
-    dispatch(removeCard(id));
-    dispatch(removeAllComments(id));
+    if (user === card.author) {
+      closeCard();
+      dispatch(removeCard(id));
+      dispatch(removeAllComments(id));
+    } else {
+      alert("U are not able to delete this card");
+    }
   };
 
   useEffect(() => {
@@ -102,7 +110,9 @@ const PopupCard: React.FC<Props> = () => {
             <div
               contentEditable={true}
               suppressContentEditableWarning={true}
-              onInput={(e) => setTitle(e.currentTarget.textContent as string)}
+              onInput={(e: React.FormEvent<HTMLDivElement>) =>
+                setTitle(e.currentTarget.textContent as string)
+              }
               onBlur={() => changeTitle(newTitle, card.id)}
             >
               {card.title}
@@ -122,7 +132,7 @@ const PopupCard: React.FC<Props> = () => {
                   <FocusedDescInput
                     defaultValue={card.description}
                     placeholder="Добавьте подробное описание здесь..."
-                    onChange={(e) => {
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setChangeDesc(e.target.value);
                     }}
                     autoFocus
@@ -191,7 +201,6 @@ const PopupCard: React.FC<Props> = () => {
                       text={comment.text}
                       key={comment.id}
                       id={comment.id}
-                      user={card.author}
                     />
                   );
                 })}

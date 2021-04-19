@@ -19,8 +19,8 @@ export default App;
 export type CommentType = {
   text: string;
   id: string;
-  cardId: any;
-  author: string;
+  cardId: string;
+  author: string | null;
 };
 
 export type ColumnType = {
@@ -31,7 +31,12 @@ export type ColumnType = {
 export type CardType = {
   title: string;
   description: string;
-  author: string;
+  author: string | null;
   id: string;
   columnId: string;
+};
+
+export type ActionType = {
+  newText: string;
+  id: string;
 };

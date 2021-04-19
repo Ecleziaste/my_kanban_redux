@@ -1,9 +1,17 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { rootReducer } from "./ducks";
-
-// persist here
-const store = configureStore({ reducer: rootReducer });
+import { persistStore, persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
 
 export type RootState = ReturnType<typeof rootReducer>;
 
-export default store;
+const persistConfig = {
+  key: "root",
+  storage,
+  blacklist: ["user"],
+};
+const pReducer = persistReducer(persistConfig, rootReducer);
+const store = configureStore({ reducer: pReducer });
+const persistor = persistStore(store);
+
+export { store, persistor };

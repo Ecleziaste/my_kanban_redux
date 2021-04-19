@@ -1,6 +1,7 @@
 import { createAction } from "@reduxjs/toolkit";
+import { CommentType, ActionType } from "../../App";
 
-export const addComment = createAction<any>("comments/create");
-export const removeComment = createAction<any>("comments/remove");
-export const removeAllComments = createAction<any>("comments/removeAll");
-export const changeComment = createAction<any>("comments/change");
+export const addComment = createAction<CommentType>("comments/create");
+export const removeComment = createAction<string>("comments/remove");
+export const removeAllComments = createAction<string>("comments/removeAll");
+export const changeComment = createAction<ActionType>("comments/change");

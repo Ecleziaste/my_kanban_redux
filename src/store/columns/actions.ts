@@ -1,3 +1,4 @@
 import { createAction } from "@reduxjs/toolkit";
+import { ActionType } from "../../App";
 
-export const changeTitle = createAction<any>("columns/change");
+export const changeTitle = createAction<ActionType>("columns/change");

@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { removeComment, changeComment } from "../../store/comments/actions";
+import { selectUser } from "../../store/user/selectors";
 
-const Comment: React.FC<Props> = ({ author, text, id, user }) => {
+const Comment: React.FC<Props> = ({ author, text, id }) => {
+  const user = useSelector(selectUser);
   const dispatch = useDispatch();
   const [newText, setNewText] = useState(text);
 
@@ -129,8 +131,7 @@ const DelBtn = styled.button`
 export default Comment;
 
 type Props = {
-  author: string;
+  author: string | null;
   text: string;
   id: string;
-  user: string;
 };

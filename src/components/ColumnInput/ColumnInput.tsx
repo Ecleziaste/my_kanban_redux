@@ -5,7 +5,7 @@ const ColumnInput: React.FC<Props> = ({ createCard, toggleInput, id }) => {
   const [title, setTitle] = useState("");
 
   useEffect(() => {
-    const handleEnter = (e: any) => {
+    const handleEnter = (e: KeyboardEvent) => {
       if (e.keyCode === 13) {
         createCard(title, id);
         toggleInput(false);
@@ -14,15 +14,15 @@ const ColumnInput: React.FC<Props> = ({ createCard, toggleInput, id }) => {
     window.addEventListener("keydown", handleEnter);
     return () => window.removeEventListener("keydown", handleEnter);
   }, [title]);
-
+  // FIXME: устаревший код??
   useEffect(() => {
-    const handleEnter = (e: any) => {
+    const handleEsc = (e: any) => {
       if (e.keyCode === 27) {
         toggleInput(false);
       }
     };
-    window.addEventListener("keydown", handleEnter);
-    return () => window.removeEventListener("keydown", handleEnter);
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
   }, []);
 
   return (

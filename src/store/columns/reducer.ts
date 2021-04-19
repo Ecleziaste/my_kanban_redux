@@ -1,6 +1,7 @@
 import { createReducer } from "@reduxjs/toolkit";
 import { ColumnType } from "../../App";
 import { changeTitle } from "./actions";
+import { RootState } from "../../store";
 
 const initialState: Array<ColumnType> = [
   { title: "TODO", id: "1" },
@@ -11,9 +12,9 @@ const initialState: Array<ColumnType> = [
 
 export const columnsReducer = createReducer(initialState, (builder) => {
   builder.addCase(changeTitle, (state, action) => {
-    state.map((c: any) => {
+    state.map((c: ColumnType) => {
       if (c.id === action.payload.id) {
-        c.title = action.payload.newTitle;
+        c.title = action.payload.newText;
       }
       return state;
     });
