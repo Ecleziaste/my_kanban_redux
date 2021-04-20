@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import { Form, Field } from "react-final-form";
 
 const ColumnInput: React.FC<Props> = ({ createCard, toggleInput, id }) => {
   const [title, setTitle] = useState("");
@@ -25,8 +26,38 @@ const ColumnInput: React.FC<Props> = ({ createCard, toggleInput, id }) => {
     return () => window.removeEventListener("keydown", handleEsc);
   }, []);
 
+  const onSubmit = (e: any) => {
+    console.log("submit clicked");
+  };
+  const validate = (e: any) => {
+    const errors: ErrorsType = {
+      cardTitle: "",
+    };
+    if (e.cardTitle && e.cardTitle.length <= 0) {
+      errors.cardTitle = "Заголовок должен содержать хотя бы 1 символ";
+    }
+    return errors;
+  };
+
   return (
     <Container>
+      {/* <Form
+        onSubmit={onSubmit}
+        validate={validate}
+        render={({ handleSubmit }) => (
+          <form onSubmit={handleSubmit}>
+            <div>
+              <Field
+                name="cardTitle"
+                component="input"
+                placeholder="&nbsp;Введите заголовок для карточки"
+              />
+            </div>
+            <div>buttons here </div>
+          </form>
+        )}
+      />
+      ; */}
       <Input
         autoFocus
         placeholder="&nbsp;Введите заголовок для карточки"
@@ -90,4 +121,8 @@ type Props = {
   id: string;
   createCard: (title: string, columnId: string) => void;
   toggleInput: (arg: boolean) => void;
+};
+
+type ErrorsType = {
+  cardTitle: string;
 };
