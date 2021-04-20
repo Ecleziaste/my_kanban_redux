@@ -4,7 +4,8 @@ import { Form, Field } from "react-final-form";
 
 const ColumnInput: React.FC<Props> = ({ createCard, toggleInput, id }) => {
   const [title, setTitle] = useState("");
-
+  // КАК теперь добавлять на Enterб не используя локальный стейт?
+  // устаревший код??
   useEffect(() => {
     const handleEnter = (e: KeyboardEvent) => {
       if (e.keyCode === 13) {
@@ -15,7 +16,7 @@ const ColumnInput: React.FC<Props> = ({ createCard, toggleInput, id }) => {
     window.addEventListener("keydown", handleEnter);
     return () => window.removeEventListener("keydown", handleEnter);
   }, [title]);
-  // FIXME: устаревший код??
+  // или any
   useEffect(() => {
     const handleEsc = (e: any) => {
       if (e.keyCode === 27) {
@@ -26,60 +27,67 @@ const ColumnInput: React.FC<Props> = ({ createCard, toggleInput, id }) => {
     return () => window.removeEventListener("keydown", handleEsc);
   }, []);
 
-  const onSubmit = (e: any) => {
-    console.log("submit clicked");
-  };
-  const validate = (e: any) => {
-    const errors: ErrorsType = {
-      cardTitle: "",
-    };
-    if (e.cardTitle && e.cardTitle.length <= 0) {
-      errors.cardTitle = "Заголовок должен содержать хотя бы 1 символ";
-    }
-    return errors;
+  // const validate = (e: any) => {
+  //   const errors: ErrorsType = {
+  //     cardTitle: "",
+  //   };
+  //   if (e.cardTitle && e.cardTitle.length <= 0) {
+  //     errors.cardTitle = "Заголовок должен содержать хотя бы 1 символ";
+  //   }
+  //   return errors;
+  // };
+
+  const sleep = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
+
+  // пришлось писать валидацию внутри, т.к. валидация из createCard не робит. И она не робит лол!
+  const onSubmit = async (values: any) => {
+    await sleep(150);
+    const title = values.cardTitle;
+    createCard(title, id);
+    toggleInput(false);
+    // if (title.length > 0) {
+    //   createCard(title, id);
+    //   toggleInput(false);
+    // } else {
+    //   alert("Заголовок должен содержать хотя бы 1 символ");
+    // }
   };
 
   return (
     <Container>
-      {/* <Form
+      <Form
         onSubmit={onSubmit}
-        validate={validate}
-        render={({ handleSubmit }) => (
-          <form onSubmit={handleSubmit}>
-            <div>
-              <Field
-                name="cardTitle"
-                component="input"
-                placeholder="&nbsp;Введите заголовок для карточки"
-              />
-            </div>
-            <div>buttons here </div>
-          </form>
+        // validate={validate}
+        initialValues={title}
+        render={({ handleSubmit, form }) => (
+          <Container onSubmit={handleSubmit}>
+            <form>
+              {/* как стилизовать со styled components */}
+              <Input>
+                <Field
+                  autoFocus
+                  name="cardTitle"
+                  component="input"
+                  // onInput={(e: any) => setTitle(e.target.value)}
+                  type="text"
+                  placeholder="&nbsp;Введите заголовок для карточки"
+                />
+              </Input>
+
+              <BtnsWrapper>
+                <AddBtn type="submit">Добавить</AddBtn>
+                <CancelBtn
+                  // onClick={form.reset}
+                  onClick={() => toggleInput(false)}
+                >
+                  &#10006;
+                </CancelBtn>
+              </BtnsWrapper>
+            </form>
+          </Container>
         )}
       />
-      ; */}
-      <Input
-        autoFocus
-        placeholder="&nbsp;Введите заголовок для карточки"
-        onChange={(e) => setTitle(e.target.value)}
-      ></Input>
-      <BtnsWrapper>
-        <AddBtn
-          className="input__add_btn"
-          onClick={() => {
-            createCard(title, id);
-            toggleInput(false);
-          }}
-        >
-          Добавить
-        </AddBtn>
-        <CancelBtn
-          className="input__del_btn"
-          onClick={() => toggleInput(false)}
-        >
-          &#10006;
-        </CancelBtn>
-      </BtnsWrapper>
     </Container>
   );
 };
@@ -93,7 +101,8 @@ const BtnsWrapper = styled.div`
   display: flex;
   justify-content: space-between;
 `;
-const Input = styled.input`
+// FIXME: div \ input
+const Input = styled.div`
   width: 100%;
   height: 50%;
   align-self: center;
@@ -105,6 +114,7 @@ const Input = styled.input`
     background: white;
   }
 `;
+
 const AddBtn = styled.button`
   margin-top: 5px;
   height: 25px;
