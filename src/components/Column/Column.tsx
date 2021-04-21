@@ -32,10 +32,11 @@ const Column: React.FC<Props> = ({ id }) => {
 
   const createCard = (title: string, columnId: string): void => {
     if (title === "" || undefined) {
+      console.log(title);
       alert("карточка нуждается хотя бы в одном символе");
     } else {
       const newCard = {
-        title,
+        title: title,
         description: "",
         author: user,
         id: uuidv4(),

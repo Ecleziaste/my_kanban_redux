@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Comment from "../Comment";
-import { CardType, CommentType } from "../../App";
+import { CommentType } from "../../Types";
 import styled from "styled-components";
 import { v4 as uuidv4 } from "uuid";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,7 +15,6 @@ import { toggleActiveCard } from "../../store/activeCard/actions";
 import { addComment } from "../../store/comments/actions";
 import { selectActiveCard } from "../../store/activeCard/selectors";
 import { selectColumnById } from "../../store/columns/selectors";
-// import { selectByCardId } from "../../store/comments/selectors";
 import { RootState } from "../../store";
 import { selectUser } from "../../store/user/selectors";
 
@@ -30,7 +29,6 @@ const PopupCard: React.FC<Props> = () => {
   const [activeDescriptionInput, setActiveDescriptionInput] = useState(false);
   const [activeCommentInput, setActiveCommentInput] = useState(false);
 
-  // const commentsByCardId = useSelector(selectByCardId)!;
   const commentsByCardId = comments.filter(
     (comm: CommentType) => comm.cardId === card!.id
   );
@@ -100,11 +98,7 @@ const PopupCard: React.FC<Props> = () => {
 
   return (
     <Wrapper onClick={clickedParent}>
-      <Popup
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-      >
+      <Popup onClick={(e) => e.stopPropagation()}>
         <Header>
           <Title>
             <div

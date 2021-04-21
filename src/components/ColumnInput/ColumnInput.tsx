@@ -1,86 +1,50 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { Form, Field } from "react-final-form";
 
 const ColumnInput: React.FC<Props> = ({ createCard, toggleInput, id }) => {
-  const [title, setTitle] = useState("");
-  // КАК теперь добавлять на Enterб не используя локальный стейт?
-  // устаревший код??
   useEffect(() => {
-    const handleEnter = (e: KeyboardEvent) => {
-      if (e.keyCode === 13) {
-        createCard(title, id);
-        toggleInput(false);
-      }
-    };
-    window.addEventListener("keydown", handleEnter);
-    return () => window.removeEventListener("keydown", handleEnter);
-  }, [title]);
-  // или any
-  useEffect(() => {
-    const handleEsc = (e: any) => {
+    const handleEsc = (e: KeyboardEvent) => {
       if (e.keyCode === 27) {
         toggleInput(false);
       }
     };
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
-  }, []);
-
-  // const validate = (e: any) => {
-  //   const errors: ErrorsType = {
-  //     cardTitle: "",
-  //   };
-  //   if (e.cardTitle && e.cardTitle.length <= 0) {
-  //     errors.cardTitle = "Заголовок должен содержать хотя бы 1 символ";
-  //   }
-  //   return errors;
-  // };
+  });
 
   const sleep = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms));
 
-  // пришлось писать валидацию внутри, т.к. валидация из createCard не робит. И она не робит лол!
-  const onSubmit = async (values: any) => {
+  const onSubmit = async (values: ValuesType) => {
     await sleep(150);
     const title = values.cardTitle;
+    console.log(title);
+
     createCard(title, id);
     toggleInput(false);
-    // if (title.length > 0) {
-    //   createCard(title, id);
-    //   toggleInput(false);
-    // } else {
-    //   alert("Заголовок должен содержать хотя бы 1 символ");
-    // }
   };
 
   return (
     <Container>
       <Form
         onSubmit={onSubmit}
-        // validate={validate}
-        initialValues={title}
-        render={({ handleSubmit, form }) => (
+        render={({ handleSubmit }) => (
           <Container onSubmit={handleSubmit}>
             <form>
-              {/* как стилизовать со styled components */}
-              <Input>
+              <div>
                 <Field
                   autoFocus
                   name="cardTitle"
                   component="input"
-                  // onInput={(e: any) => setTitle(e.target.value)}
+                  // component={Input}
                   type="text"
                   placeholder="&nbsp;Введите заголовок для карточки"
                 />
-              </Input>
-
+              </div>
               <BtnsWrapper>
                 <AddBtn type="submit">Добавить</AddBtn>
-                <CancelBtn
-                  // onClick={form.reset}
-                  onClick={() => toggleInput(false)}
-                >
+                <CancelBtn type="reset" onClick={() => toggleInput(false)}>
                   &#10006;
                 </CancelBtn>
               </BtnsWrapper>
@@ -101,10 +65,9 @@ const BtnsWrapper = styled.div`
   display: flex;
   justify-content: space-between;
 `;
-// FIXME: div \ input
-const Input = styled.div`
+const Input = styled.input`
   width: 100%;
-  height: 50%;
+  height: 25px;
   align-self: center;
   border: none;
   border-radius: 4px;
@@ -114,7 +77,6 @@ const Input = styled.div`
     background: white;
   }
 `;
-
 const AddBtn = styled.button`
   margin-top: 5px;
   height: 25px;
@@ -133,6 +95,6 @@ type Props = {
   toggleInput: (arg: boolean) => void;
 };
 
-type ErrorsType = {
+type ValuesType = {
   cardTitle: string;
 };

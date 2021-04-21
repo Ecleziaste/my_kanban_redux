@@ -1,6 +1,6 @@
 import React from "react";
-import { CardType } from "../../App";
-import { CommentType } from "../../App";
+import { CardType } from "../../Types";
+import { CommentType } from "../../Types";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { selectComments } from "../../store/comments/selectors";
@@ -15,16 +15,16 @@ const Card: React.FC<Props> = ({ id }) => {
   );
 
   const cards = useSelector(selectCards);
-  // Почему тут надо указывать тип? Он не прилетает из RootType?
-  const titleByCardId = cards.find((c: CardType) => c.id === id)!.title;
-  const cardByCardId = cards.find((c: CardType) => c.id === id)!;
+  // const titleByCardId = useSelector(selectTitleByCardId);
+  const titleByCardId = cards.find((card: CardType) => card.id === id)!.title;
+  const cardById = cards.find((card: CardType) => card.id === id)!;
 
   const openCard = (card: CardType) => {
     dispatch(toggleActiveCard(card));
   };
 
   return (
-    <Container onClick={() => openCard(cardByCardId)}>
+    <Container onClick={() => openCard(cardById)}>
       <div>{titleByCardId}</div>
       <span>Комментарии:&nbsp;{commentsCount.length}</span>
     </Container>

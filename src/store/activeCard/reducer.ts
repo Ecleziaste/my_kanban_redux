@@ -1,5 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { CardType } from "../../App";
+import { CardType } from "../../Types";
 import { toggleActiveCard } from "./actions";
 
 const initialState = null as null | CardType;

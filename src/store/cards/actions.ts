@@ -1,6 +1,6 @@
 import { createAction } from "@reduxjs/toolkit";
-import { CardType } from "../../App";
-import { ActionType } from "../../App";
+import { CardType } from "../../Types";
+import { ActionType } from "../../Types";
 
 export const addCard = createAction<CardType>("cards/create");
 export const removeCard = createAction<string>("cards/remove");
