@@ -29,18 +29,20 @@ const ColumnInput: React.FC<Props> = ({ createCard, toggleInput, id }) => {
     <Container>
       <Form
         onSubmit={onSubmit}
-        render={({ handleSubmit }) => (
+        render={({ handleSubmit, values }) => (
           <Container onSubmit={handleSubmit}>
             <form>
               <div>
-                <Field
-                  autoFocus
-                  name="cardTitle"
-                  component="input"
-                  // component={Input}
-                  type="text"
-                  placeholder="&nbsp;Введите заголовок для карточки"
-                />
+                <Field name="cardTitle">
+                  {(prop) => (
+                    <Input
+                      autoFocus
+                      type="text"
+                      placeholder="&nbsp;Введите заголовок для карточки"
+                      {...prop.input}
+                    />
+                  )}
+                </Field>
               </div>
               <BtnsWrapper>
                 <AddBtn type="submit">Добавить</AddBtn>
